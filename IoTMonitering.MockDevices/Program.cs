@@ -62,7 +62,7 @@ class Program
                 Timestamp = DateTime.UtcNow
             };
 
-            await telemetryClient.SendTelemtryAsync(telemetry);
+            await telemetryClient.SendTelemetryAsync(telemetry);
             await Task.Delay(1000);
         }
     }

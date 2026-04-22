@@ -18,12 +18,12 @@ namespace DeviceMock.Clients
             _port = int.Parse(parts[1]);
         }
 
-        public override bool IsDeviceRegisterd(string deviceId)
+        public override bool IsDeviceRegistered(string deviceId)
         {
             return false;
         }
 
-        public override async Task SendTelemtryAsync(Telemetry data)
+        public override async Task SendTelemetryAsync(Telemetry data)
         {
             try
             {

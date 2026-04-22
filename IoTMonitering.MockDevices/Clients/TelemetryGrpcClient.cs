@@ -13,12 +13,12 @@ namespace DeviceMock.Clients
         {
         }
 
-        public override bool IsDeviceRegisterd(string deviceId)
+        public override bool IsDeviceRegistered(string deviceId)
         {
             throw new NotImplementedException();
         }
 
-        public override Task SendTelemtryAsync(Telemetry telemetry)
+        public override Task SendTelemetryAsync(Telemetry telemetry)
         {
             throw new NotImplementedException();
         }

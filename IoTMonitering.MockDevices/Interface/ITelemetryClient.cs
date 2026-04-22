@@ -4,8 +4,8 @@ namespace DeviceMock.Interface
 {
     internal interface ITelemetryClient
     {
-        bool IsDeviceRegisterd(string deviceId);
+        bool IsDeviceRegistered(string deviceId);
 
-        Task SendTelemtryAsync(Telemetry telemetry);
+        Task SendTelemetryAsync(Telemetry telemetry);
     }
 }

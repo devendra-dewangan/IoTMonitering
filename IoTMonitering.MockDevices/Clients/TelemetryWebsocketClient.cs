@@ -20,12 +20,12 @@ namespace DeviceMock.Clients
             Console.WriteLine("[WebSocket] Connected");
         }
 
-        public override bool IsDeviceRegisterd(string deviceId)
+        public override bool IsDeviceRegistered(string deviceId)
         {
             return false;
         }
 
-        public override async Task SendTelemtryAsync(Telemetry data)
+        public override async Task SendTelemetryAsync(Telemetry data)
         {
             var json = JsonSerializer.Serialize(data);
             var bytes = Encoding.UTF8.GetBytes(json);

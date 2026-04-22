@@ -1,5 +1,4 @@
 using IoTMonitoring.Data;
-using Microsoft.EntityFrameworkCore;
 using IoTMonitoring.Hubs;
 using IoTMonitoring.Grpc;
 

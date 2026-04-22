@@ -32,3 +32,7 @@ Thumbs.db
 
 # Bazel outputs (if applicable)
 bazel-out/
+
+.bin/
+
+obj/

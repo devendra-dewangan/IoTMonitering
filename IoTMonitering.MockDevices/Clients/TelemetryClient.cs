@@ -11,8 +11,8 @@ namespace DeviceMock.Clients
             _endpoint = endpoint;
         }
 
-        public abstract bool IsDeviceRegisterd(string deviceId);
+        public abstract bool IsDeviceRegistered(string deviceId);
 
-        public abstract Task SendTelemtryAsync(Telemetry telemetry);
+        public abstract Task SendTelemetryAsync(Telemetry telemetry);
     }
 }

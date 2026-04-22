@@ -9,12 +9,12 @@ namespace DeviceMock.Clients
         private readonly HttpClient _httpClient = new HttpClient();
         public TelemetryRestClient(string endpoint) : base(endpoint) { }
 
-        public override bool IsDeviceRegisterd(string deviceId)
+        public override bool IsDeviceRegistered(string deviceId)
         {
             return false;
         }
 
-        public override async Task SendTelemtryAsync(Telemetry data)
+        public override async Task SendTelemetryAsync(Telemetry data)
         {
             try
             {
