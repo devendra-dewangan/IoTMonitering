@@ -1,46 +1,31 @@
-﻿using System.Security.Claims;
-using IoTMonitoring.Data;
-using IoTMonitoring.Migrations;
+﻿using IoTMonitoring.App.Services;
 using IoTMonitoring.Models;
-using Microsoft.AspNetCore.Authorization;
+using IoTMonitoring.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using static IoTMonitoring.Models.DTOs.DeviceDto;
 
 namespace IoTMonitoring.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class DeviceController : ControllerBase
+    public class DeviceController(IDeviceService service) : ControllerBase
     {
-        private AppDbContext _context;
+        private IDeviceService _deviceService = service;
 
-        public DeviceController(AppDbContext contex)
-        {
-            _context = contex;
-        }
-
-        
         [HttpPost]
         public async Task<IActionResult> CreateDevice(DeviceCreateDto dto)
         {
-            var userId = dto.userID;
-            var user = _context.Users.FirstOrDefault(x=>x.UserID == userId);
-            var key = Guid.NewGuid().ToString();
-            var device = new Device
-            {
-                Name = dto.Name,
-                DeviceKey = key,
-                UserId = user.Id,
-                Type = dto.Type,
-            };
+            
+            var device = await _deviceService.AddDeviceAsync(dto);
 
-            _context.Devices.Add(device);
-            await _context.SaveChangesAsync();
+            if (device == null)
+            {
+                return NotFound();
+            }
 
             return Ok(new 
             {
-                key = key,
+                key = device.DeviceKey,
                 Name = device.Name,
                 Type = device.Type,
             });
@@ -49,65 +34,47 @@ namespace IoTMonitoring.Controllers
         [HttpGet]
         public async Task<IActionResult> GetDevices(string userID)
         {
-            var user = _context.Users.FirstOrDefault(x => x.UserID == userID);
+            
+            var devices = await _deviceService.GetAllDevicesAsync(userID);
 
-            var devices = await _context.Devices
-                .Where(x => x.UserId == user.Id)
-                .ToListAsync();
+            if (!devices.Any())
+            {
+                return NoContent();
+            }
 
             return Ok(devices.Select(d => new
             {
                 Id = d.DeviceKey,
                 Name = d.Name,
                 Type = d.Type,
-            }).ToList());
+            }));
         }
 
         [HttpGet("{key}")]
         public async Task<ActionResult<DeviceReadDto>> GetDevice(string key)
         {
             
-            var device = await _context.Devices
-                .FirstOrDefaultAsync(d => d.DeviceKey == key);
-
-            if (device == null) return NotFound();
-
-            return new DeviceReadDto
-            {
-                Id = device.Id,
-                Name = device.Name,
-                Type = device.Type
-            };
+            var device = await _deviceService.GetDeviceByIdAsync(key);
+            return Ok(device);
         }
 
         [HttpPut("{key}")]
         public async Task<IActionResult> UpdateDevice(string key, DeviceUpdateDto dto)
         {
-            var device = await _context.Devices
-                .FirstOrDefaultAsync(d => d.DeviceKey == key);
-
-            if (device == null) return NotFound();
-
-            device.Name = dto.Name;
-            device.Type = dto.Type;
-
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            var device = await _deviceService.UpdateDeviceAsync(key, dto);
+            if (device == null)
+            {
+                return NotFound();
+            }
+            
+            return Ok(device);
         }
 
         [HttpDelete("{key}")]
         public async Task<IActionResult> DeleteDevice(string key)
         {
-            var device = await _context.Devices
-                .FirstOrDefaultAsync(d => d.DeviceKey == key);
-
-            if (device == null) return NotFound();
-
-            _context.Devices.Remove(device);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            await _deviceService.DeleteDeviceAsync(key);
+            return Ok();
         }
     }
 }

@@ -4,8 +4,8 @@ namespace IoTMonitoring.App.Repository
 {
     public interface IUnitOfWork
     {
-        IRepository<User> UserRepository { get; }
-        IRepository<Device> DeviceRepository { get; }
-        Task SaveAsync();
+        IRepository<User> Users { get; }
+        IDeviceRepository Devices { get; }
+        Task<int> CommitAsync();
     }
 }

@@ -1,7 +1,5 @@
 ﻿namespace IoTMonitoring.Models.DTOs
 {
-    public class DeviceDto
-    {
         public class DeviceCreateDto
         {
             public string userID { get; set; } = string.Empty;
@@ -23,5 +21,4 @@
             public string Name { get; set; } = string.Empty;
             public DeviceType Type { get; set; } = DeviceType.Unknown;
         }
-    }
 }
