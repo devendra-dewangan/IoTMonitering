@@ -1,6 +1,8 @@
 using IoTMonitoring.Data;
 using IoTMonitoring.Hubs;
 using IoTMonitoring.Grpc;
+using Microsoft.EntityFrameworkCore;
+using IoTMonitoring.App.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,16 +14,13 @@ builder.WebHost.ConfigureKestrel(options =>
     });
 });
 
-
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
 builder.Services.AddGrpc();
