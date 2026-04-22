@@ -27,7 +27,7 @@ namespace IoTMonitoring.App.Services
             return _unitOfWork.Devices.DeleteAsync(id);
         }
 
-        public Task<IEnumerable<Device>?> GetAllDevicesAsync(string userId)
+        public Task<IEnumerable<Device>> GetAllDevicesAsync(string userId)
         {
             var user = _unitOfWork.Users.GetByIdAsync(userId);
             return _unitOfWork.Devices.GetDevicesByUserIdAsync(user.Id);

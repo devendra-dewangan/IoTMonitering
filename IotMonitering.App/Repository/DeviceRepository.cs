@@ -6,7 +6,7 @@ namespace IoTMonitoring.App.Repository
 {
     public interface IDeviceRepository : IRepository<Device>
     {
-        Task<IEnumerable<Device>?> GetDevicesByUserIdAsync(int userId);   
+        Task<IEnumerable<Device>> GetDevicesByUserIdAsync(int userId);   
     }
     public class DeviceRepository(AppDbContext _context) : IDeviceRepository
     {
@@ -30,7 +30,7 @@ namespace IoTMonitoring.App.Repository
             return await _context.Devices.FirstOrDefaultAsync(d => d.DeviceKey == id);
         }
 
-        public async Task<IEnumerable<Device>?> GetDevicesByUserIdAsync(int userId)
+        public async Task<IEnumerable<Device>> GetDevicesByUserIdAsync(int userId)
         {
             return [.. _context.Devices.Where(x => x.UserId == userId)];
         }

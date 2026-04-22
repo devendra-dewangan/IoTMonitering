@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.ListenAnyIP(int.Parse(builder.Configuration["Port"]), o =>
+    options.ListenAnyIP(int.Parse(builder.Configuration["Port"] ?? "5000"), o =>
     {
         o.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2;
     });
