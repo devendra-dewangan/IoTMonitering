@@ -83,3 +83,5 @@ node_modules/
 *.tmp
 
 .vs/
+
+[Oo]bj/
