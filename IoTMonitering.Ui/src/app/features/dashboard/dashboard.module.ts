@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { HomeComponent } from './home/home.component';
 import { AuthService } from '../../core/auth/auth.service';
+import { SharedModule } from '../../shared/shared.module';
 
 
 @NgModule({
@@ -11,6 +12,7 @@ import { AuthService } from '../../core/auth/auth.service';
   ],
   imports: [
     CommonModule,
+    SharedModule,
     DashboardRoutingModule
   ],
   providers:[AuthService]

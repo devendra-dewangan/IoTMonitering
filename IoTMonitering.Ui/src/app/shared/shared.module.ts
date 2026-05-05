@@ -4,22 +4,24 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { Page404Component } from './page404/page404.component';
 import { CopyrightsComponent } from './copyrights/copyrights.component';
 import { AppRoutingModule } from "../app-routing.module";
-import { MatButtonModule } from "@angular/material/button"
+import { ChartComponent } from './chart/chart.component';
+import { BaseChartDirective } from 'ng2-charts';
 
 @NgModule({
   declarations: [
     NavbarComponent,
     Page404Component,
     CopyrightsComponent,
+    ChartComponent,
   ],
   imports: [
     CommonModule,
-    AppRoutingModule,
-    MatButtonModule
+    BaseChartDirective
 ],
   exports: [
     NavbarComponent,
-    CopyrightsComponent
+    CopyrightsComponent,
+    ChartComponent
   ]
 
 })
