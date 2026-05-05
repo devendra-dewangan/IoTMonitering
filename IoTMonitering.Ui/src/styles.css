@@ -6,4 +6,6 @@ body {
   background-position: center;
      }
 
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
