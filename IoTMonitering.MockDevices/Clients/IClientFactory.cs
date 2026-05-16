@@ -2,9 +2,9 @@
 
 namespace DeviceMock.Clients
 {
-    public interface ITelemetryClientFactory
+    public interface IClientFactory
     {
-        ITelemetryClient GetClient(Protocol type);
+        IClient GetClient(Protocol type);
     }
 
     public enum Protocol

@@ -3,7 +3,7 @@ using DeviceMock.Models;
 
 namespace DeviceMock.Clients
 {
-    public abstract class TelemetryClient : ITelemetryClient
+    public abstract class TelemetryClient : IClient
     {
         protected readonly string _endpoint;
 

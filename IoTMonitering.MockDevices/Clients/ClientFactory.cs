@@ -2,9 +2,9 @@
 
 namespace DeviceMock.Clients
 {
-    public class TelemetryClientFactory : ITelemetryClientFactory
+    public class ClientFactory : IClientFactory
     {
-        public ITelemetryClient GetClient(Protocol type)
+        public IClient GetClient(Protocol type)
         {
             return type switch
             {

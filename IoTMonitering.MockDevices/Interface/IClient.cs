@@ -2,7 +2,7 @@
 
 namespace DeviceMock.Interface
 {
-    public interface ITelemetryClient
+    public interface IClient
     {
         bool IsDeviceRegistered(string deviceId);
 

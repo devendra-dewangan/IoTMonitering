@@ -10,11 +10,11 @@ namespace DeviceMock.HostedServices;
 
 public class DeviceWoker : BackgroundService
 {
-    private readonly ITelemetryClient _telemetryClient;
+    private readonly IClient _telemetryClient;
     private readonly DeviceInfo _options;
     private readonly ILogger<DeviceWoker> _logger;
 
-    public DeviceWoker(ITelemetryClientFactory telemetryClientFactory
+    public DeviceWoker(IClientFactory telemetryClientFactory
                         , IOptions<DeviceInfo> options
                         ,ILogger<DeviceWoker> logger)
     {

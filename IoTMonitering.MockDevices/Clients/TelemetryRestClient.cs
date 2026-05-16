@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using System.Text.Json;
 using DeviceMock.Models;
+using Microsoft.Extensions.Logging;
 
 namespace DeviceMock.Clients
 {
