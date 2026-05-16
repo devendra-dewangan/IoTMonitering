@@ -12,8 +12,8 @@ builder.Services.Configure<DeviceInfo>(
 builder.Services.Configure<ServerInfo>(
     builder.Configuration.GetSection(nameof(ServerInfo)));
 
-builder.Services.AddScoped<IClientFactory, ClientFactory>();
 builder.Services.AddHostedService<DeviceWoker>();
+builder.Services.AddKeyedScoped<IClient, TelemetryRestClient>(ProtocolType.Rest);
 
 var app = builder.Build();
 app.Run();

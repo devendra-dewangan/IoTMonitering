@@ -1,6 +1,6 @@
 ﻿using DeviceMock.Clients;
-using DeviceMock.Interface;
 using DeviceMock.Models;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -10,22 +10,24 @@ namespace DeviceMock.HostedServices;
 
 public class DeviceWoker : BackgroundService
 {
-    private readonly IClient _telemetryClient;
     private readonly DeviceInfo _options;
     private readonly ILogger<DeviceWoker> _logger;
+    private readonly IServiceProvider _serviceProvider;
 
-    public DeviceWoker(IClientFactory telemetryClientFactory
+    public DeviceWoker(IServiceProvider services
                         , IOptions<DeviceInfo> options
                         ,ILogger<DeviceWoker> logger)
     {
         _options = options.Value;
-        _telemetryClient = telemetryClientFactory.GetClient(_options.Protocol);
+        _serviceProvider = services;
         _logger = logger;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _logger.LogInformation("Device worker started.");
+        var client = _serviceProvider.GetRequiredKeyedService<IClient>(_options.ProtocolType);
+
         while (stoppingToken.IsCancellationRequested)
         {
             Telemetry telemetry = new()
@@ -35,7 +37,7 @@ public class DeviceWoker : BackgroundService
                 Temperature = new Random().Next(-20, 50),
                 Humidity = new Random().Next(0, 100)
             };
-            await _telemetryClient.SendTelemetryAsync(telemetry);
+            await client.SendTelemetryAsync(telemetry);
             await Task.Delay(_options.DelayMs, stoppingToken);
         }
         _logger.LogInformation("Device worker stopped.");

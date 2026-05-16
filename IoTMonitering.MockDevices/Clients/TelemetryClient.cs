@@ -1,5 +1,4 @@
-﻿using DeviceMock.Interface;
-using DeviceMock.Models;
+﻿using DeviceMock.Models;
 
 namespace DeviceMock.Clients
 {
