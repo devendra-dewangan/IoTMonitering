@@ -12,11 +12,8 @@ namespace DeviceMock.Clients
         private readonly int _port;
         private readonly TcpClient _tcpClient = new TcpClient();
 
-        public TelemetryTcpClient(string endpoint) : base(endpoint)
+        public TelemetryTcpClient()
         {
-            var parts = endpoint.Split(':');
-            _host = parts[0];
-            _port = int.Parse(parts[1]);
         }
 
         public override bool IsDeviceRegistered(string deviceId)

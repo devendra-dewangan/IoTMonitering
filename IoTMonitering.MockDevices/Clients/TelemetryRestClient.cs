@@ -7,7 +7,7 @@ namespace DeviceMock.Clients
     internal class TelemetryRestClient : TelemetryClient
     {
         private readonly HttpClient _httpClient = new HttpClient();
-        public TelemetryRestClient(string endpoint) : base(endpoint) { }
+        public TelemetryRestClient() { }
 
         public override bool IsDeviceRegistered(string deviceId)
         {

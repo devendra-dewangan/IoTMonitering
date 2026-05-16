@@ -1,21 +1,20 @@
 ﻿using DeviceMock.Interface;
-using DeviceMock.Models;
 
 namespace DeviceMock.Clients
 {
-    public static class TelemetryClientFactory
+    public class TelemetryClientFactory : ITelemetryClientFactory
     {
-        public static TelemetryClient? Create(string type, string endpoint)
+        public ITelemetryClient GetClient(Protocol type)
         {
             return type switch
             {
-                "rest" => new TelemetryRestClient(endpoint),
-                "hub" => new TelemetryRestClient(endpoint),
-                "websocket" => new TelemetryRestClient(endpoint),
-                "tcp" => new TelemetryRestClient(endpoint),
-                "udp" => new TelemetryRestClient(endpoint),
-                "grpc" => new TelemetryRestClient(endpoint),
-                _ => null
+                Protocol.Rest => new TelemetryRestClient(),
+                Protocol.Hub => new TelemtryHubClient(),
+                Protocol.WebSocket => new TelemetryWebsocketClient(),
+                Protocol.Tcp => new TelemetryTcpClient(),
+                Protocol.Udp => new TelemetryUdpClient(),
+                Protocol.Grpc => new TelemetryGrpcClient(),
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
             };
         }
     }

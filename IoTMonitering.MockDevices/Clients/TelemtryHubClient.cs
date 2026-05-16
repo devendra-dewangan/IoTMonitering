@@ -7,10 +7,10 @@ namespace DeviceMock.Clients
     internal class TelemtryHubClient : TelemetryClient
     {
         private readonly HubConnection hubConnection;
-        public TelemtryHubClient(string endpoint) : base(endpoint)
+        public TelemtryHubClient()
         {
             hubConnection =new HubConnectionBuilder()
-                .WithUrl(endpoint)
+                .WithUrl("endpoint")
                 .WithAutomaticReconnect()
                 .Build();
             hubConnection.StartAsync().RunSynchronously();

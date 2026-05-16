@@ -9,7 +9,7 @@ namespace DeviceMock.Clients
 {
     internal class TelemetryGrpcClient : TelemetryClient
     {
-        public TelemetryGrpcClient(string endpoint) : base(endpoint)
+        public TelemetryGrpcClient()
         {
         }
 

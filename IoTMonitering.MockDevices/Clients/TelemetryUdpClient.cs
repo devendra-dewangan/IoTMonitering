@@ -2,7 +2,6 @@
 using System.Text;
 using System.Text.Json;
 using DeviceMock.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DeviceMock.Clients
 {
@@ -11,11 +10,8 @@ namespace DeviceMock.Clients
         private readonly string _host;
         private readonly int _port;
         private readonly UdpClient _udpClient = new UdpClient();
-        public TelemetryUdpClient(string endpoint) : base(endpoint)
+        public TelemetryUdpClient() 
         {
-            var parts = endpoint.Split(':');
-            _host = parts[0];
-            _port = int.Parse(parts[1]);
         }
 
         public override bool IsDeviceRegistered(string deviceId)
