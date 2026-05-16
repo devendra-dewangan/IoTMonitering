@@ -1,5 +1,0 @@
-D:\Projects\IoTMonitering\DeviceMock\obj\Debug\net8.0\DeviceMock.GeneratedMSBuildEditorConfig.editorconfig
-D:\Projects\IoTMonitering\DeviceMock\obj\Debug\net8.0\DeviceMock.AssemblyInfoInputs.cache
-D:\Projects\IoTMonitering\DeviceMock\obj\Debug\net8.0\DeviceMock.AssemblyInfo.cs
-D:\Projects\IoTMonitering\DeviceMock\obj\Debug\net8.0\DeviceMock.csproj.CoreCompileInputs.cache
-D:\Projects\IoTMonitering\DeviceMock\obj\Debug\net8.0\DeviceMock.sourcelink.json
