@@ -2,6 +2,7 @@
 using DeviceMock.HostedServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using MockDevices.Configurations;
 
 var builder = Host.CreateApplicationBuilder(args);
@@ -13,7 +14,18 @@ builder.Services.Configure<ServerInfo>(
     builder.Configuration.GetSection(nameof(ServerInfo)));
 
 builder.Services.AddHostedService<DeviceWoker>();
-builder.Services.AddKeyedScoped<IClient, TelemetryRestClient>(ProtocolType.Rest);
+
+builder.Services.AddHttpClient<TelemetryRestClient>((provider,client) =>
+{
+    var serverInfo = provider
+        .GetRequiredService<IOptions<ServerInfo>>()
+        .Value;
+    client.BaseAddress = new Uri(serverInfo.ServerUri);
+});
+builder.Services.AddKeyedScoped<IClient, TelemetryRestClient>(
+    ProtocolType.Rest
+    ,(provider,_) => provider.GetRequiredService<TelemetryRestClient>());
+    
 
 var app = builder.Build();
 app.Run();

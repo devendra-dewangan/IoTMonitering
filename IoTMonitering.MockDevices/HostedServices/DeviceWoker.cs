@@ -28,17 +28,27 @@ public class DeviceWoker : BackgroundService
         _logger.LogInformation("Device worker started.");
         var client = _serviceProvider.GetRequiredKeyedService<IClient>(_options.ProtocolType);
 
-        while (stoppingToken.IsCancellationRequested)
+        while (!stoppingToken.IsCancellationRequested)
         {
-            Telemetry telemetry = new()
+            try
             {
-                DeviceId = Guid.NewGuid().ToString(),
-                Timestamp = DateTime.UtcNow,
-                Temperature = new Random().Next(-20, 50),
-                Humidity = new Random().Next(0, 100)
-            };
-            await client.SendTelemetryAsync(telemetry);
-            await Task.Delay(_options.DelayMs, stoppingToken);
+                _logger.LogInformation("Sending telemetry data...");
+                Telemetry telemetry = new()
+                {
+                    DeviceId = Guid.NewGuid().ToString(),
+                    Timestamp = DateTime.UtcNow,
+                    Temperature = new Random().Next(-20, 50),
+                    Humidity = new Random().Next(0, 100)
+                };
+                await client.SendTelemetryAsync(telemetry);
+                await Task.Delay(_options.DelayMs, stoppingToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error sending telemetry data.");
+                throw;
+            }
+            
         }
         _logger.LogInformation("Device worker stopped.");
     }
