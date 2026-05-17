@@ -9,6 +9,10 @@ using IoTMonitering.Domain.Protos;
 
 var builder = Host.CreateApplicationBuilder(args);
 
+AppContext.SetSwitch(
+    "System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport",
+    true);
+
 builder.Services.Configure<DeviceInfo>(
     builder.Configuration.GetSection(nameof(DeviceInfo)));
 
@@ -42,7 +46,7 @@ builder.Services.AddKeyedScoped<IClient, TelemetryTcpClient>(ProtocolType.Tcp);
 builder.Services.AddKeyedScoped<IClient, TelemetryUdpClient>(ProtocolType.Udp);
 builder.Services.AddKeyedScoped<IClient, TelemetryWebsocketClient>(ProtocolType.WebSocket);
 
-builder.Services.AddGrpcClient<TelemetryService.TelemetryServiceBase>((provider, client) =>
+builder.Services.AddGrpcClient<TelemetryService.TelemetryServiceClient>((provider, client) =>
 {
     var serverInfo = provider.GetRequiredService<IOptions<ServerInfo>>().Value;
     client.Address = new Uri(serverInfo.ServerUri);
@@ -50,4 +54,4 @@ builder.Services.AddGrpcClient<TelemetryService.TelemetryServiceBase>((provider,
 builder.Services.AddKeyedScoped<IClient, TelemetryGrpcClient>(ProtocolType.Grpc);
 
 var app = builder.Build();
-app.Run();
+await app.RunAsync();

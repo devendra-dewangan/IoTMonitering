@@ -1,5 +1,4 @@
 ﻿using Grpc.Core;
-using IoTMonitoring.Data;
 using IoTMonitering.Domain.Protos;
 using IoTMonitering.Domain.Entity;
 
@@ -7,11 +6,11 @@ namespace IoTMonitoring.Grpc
 {
     public class TelemetryGrpcService : TelemetryService.TelemetryServiceBase
     {
-        private readonly AppDbContext _context;
+        private readonly ILogger _logger;
 
-        public TelemetryGrpcService(AppDbContext context)
+        public TelemetryGrpcService(ILogger<TelemetryGrpcService> logger)
         {
-            _context = context;
+            _logger = logger;
         }
 
         public override async Task<TelemetryResponse> StreamTelemetry(
@@ -20,8 +19,6 @@ namespace IoTMonitoring.Grpc
         {
             await foreach (var telemetryReq in requestStream.ReadAllAsync())
             {
-                var device = await _context.Devices.FindAsync(telemetryReq.DeviceId);
-                if (device == null) continue; // skip invalid device
 
                 var telemetry = new Telemetry
                 {
@@ -31,8 +28,8 @@ namespace IoTMonitoring.Grpc
                     Timestamp = DateTime.UtcNow
                 };
 
-                _context.Telemetries.Add(telemetry);
-                await _context.SaveChangesAsync();
+                _logger.LogInformation("Received telemetry from Device {DeviceId}: Temp={Temperature}, Humidity={Humidity}",
+                    telemetryReq.DeviceId, telemetryReq.Temperature, telemetryReq.Humidity);
 
                 // Optional: broadcast to SignalR hub if you want live updates
             }

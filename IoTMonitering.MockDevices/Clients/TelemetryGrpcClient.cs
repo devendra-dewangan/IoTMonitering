@@ -8,7 +8,6 @@ namespace DeviceMock.Clients
     {
         private readonly TelemetryService.TelemetryServiceClient _client;
         private readonly ILogger<TelemetryGrpcClient> _logger;
-private readonly ILogger<TelemetryGrpcClient> _log;
         public TelemetryGrpcClient(TelemetryService.TelemetryServiceClient client
                                     ,ILogger<TelemetryGrpcClient> logger)
         {

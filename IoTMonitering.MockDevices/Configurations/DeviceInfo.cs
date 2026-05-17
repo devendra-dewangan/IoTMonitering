@@ -8,5 +8,5 @@ public class DeviceInfo
     public string DeviceType { get; set; }
     public string Location { get; set; }
     public ProtocolType ProtocolType { get; set; }
-    public int DelayMs { get; set; }
+    public int DelayMs { get; set; } = 1000;
 }

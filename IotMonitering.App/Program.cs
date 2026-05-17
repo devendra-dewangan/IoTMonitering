@@ -1,16 +1,23 @@
-using IoTMonitoring.Data;
-using IoTMonitoring.Hubs;
-using IoTMonitoring.Grpc;
-using Microsoft.EntityFrameworkCore;
 using IoTMonitoring.App.Repository;
+using IoTMonitoring.Data;
+using IoTMonitoring.Grpc;
+using IoTMonitoring.Hubs;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.ListenAnyIP(int.Parse(builder.Configuration["Port"] ?? "5000"), o =>
+    options.ListenLocalhost(5050, o =>
     {
-        o.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2;
+        o.Protocols = HttpProtocols.Http1;
+    });
+
+    // gRPC
+    options.ListenLocalhost(7218, o =>
+    {
+        o.Protocols = HttpProtocols.Http2;
     });
 });
 
