@@ -1,7 +1,7 @@
 ﻿using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
-using DeviceMock.Models;
+using IoTMonitering.Domain.Entity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MockDevices.Configurations;

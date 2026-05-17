@@ -1,4 +1,4 @@
-﻿using DeviceMock.Models;
+﻿using IoTMonitering.Domain.Entity;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
 

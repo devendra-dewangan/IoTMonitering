@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using MockDevices.Configurations;
+using IoTMonitering.Domain.Protos;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -41,13 +42,12 @@ builder.Services.AddKeyedScoped<IClient, TelemetryTcpClient>(ProtocolType.Tcp);
 builder.Services.AddKeyedScoped<IClient, TelemetryUdpClient>(ProtocolType.Udp);
 builder.Services.AddKeyedScoped<IClient, TelemetryWebsocketClient>(ProtocolType.WebSocket);
 
-//builder.Services.AddGrpcClient<TelemetryGrpcClient>((provider,client) =>
-//{
-//    var serverInfo = provider.GetRequiredService<IOptions<ServerInfo>>().Value;
-//    client.Address = new Uri(serverInfo.ServerUri);
-//});
-//builder.Services.AddKeyedScoped<IClient, TelemetryGrpcClient>(ProtocolType.Grpc
-//    , (sp, _) => sp.GetRequiredService<TelemetryGrpcClient>());
+builder.Services.AddGrpcClient<TelemetryService.TelemetryServiceBase>((provider, client) =>
+{
+    var serverInfo = provider.GetRequiredService<IOptions<ServerInfo>>().Value;
+    client.Address = new Uri(serverInfo.ServerUri);
+});
+builder.Services.AddKeyedScoped<IClient, TelemetryGrpcClient>(ProtocolType.Grpc);
 
 var app = builder.Build();
 app.Run();

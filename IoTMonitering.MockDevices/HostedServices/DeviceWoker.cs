@@ -1,5 +1,5 @@
 ﻿using DeviceMock.Clients;
-using DeviceMock.Models;
+using IoTMonitering.Domain.Entity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -35,7 +35,6 @@ public class DeviceWoker : BackgroundService
                 _logger.LogInformation("Sending telemetry data...");
                 Telemetry telemetry = new()
                 {
-                    DeviceId = Guid.NewGuid().ToString(),
                     Timestamp = DateTime.UtcNow,
                     Temperature = new Random().Next(-20, 50),
                     Humidity = new Random().Next(0, 100)

@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using System.Text.Json;
-using DeviceMock.Models;
+using IoTMonitering.Domain.Entity;
 using Microsoft.Extensions.Logging;
 
 namespace DeviceMock.Clients

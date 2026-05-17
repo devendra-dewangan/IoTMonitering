@@ -1,4 +1,4 @@
-﻿using DeviceMock.Models;
+﻿using IoTMonitering.Domain.Entity;
 
 namespace DeviceMock.Clients
 {
