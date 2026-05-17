@@ -1,6 +1,7 @@
 ﻿using IoTMonitering.Domain.Entity;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
+using System.Data.Common;
 
 
 namespace DeviceMock.Clients
@@ -13,8 +14,14 @@ namespace DeviceMock.Clients
         public TelemtryHubClient(HubConnection hubConnection, ILogger<TelemtryHubClient> logger)
         {
             _hubConnection = hubConnection;
-            _logger = logger;
-            _logger.LogInformation("[SignalR] Connected");
+            _logger = logger;;
+            _hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+            {
+                _logger.LogInformation($"{user}: {message}");
+            });
+            _hubConnection.StartAsync().Wait();
+
+            _logger.LogInformation("Connected to SignalR Hub");
         }
 
         public bool IsDeviceRegistered(string deviceId)

@@ -45,6 +45,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.MapControllers();
-app.MapHub<TelemetryHub>("/hubs/telemetry");
+app.MapHub<TelemetryHub>("/hubs");
 app.MapGrpcService<TelemetryGrpcService>();
 app.Run();
