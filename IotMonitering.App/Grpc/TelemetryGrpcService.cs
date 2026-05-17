@@ -1,6 +1,7 @@
 ﻿using Grpc.Core;
 using IoTMonitoring.Data;
-using IoTMonitoring.Models;
+using IoTMonitering.Domain.Protos;
+using IoTMonitering.Domain.Entity;
 
 namespace IoTMonitoring.Grpc
 {

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36429.23
+# Visual Studio Version 18
+VisualStudioVersion = 18.6.11806.211 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoTMonitoring", "IotMonitering.App\IoTMonitoring.csproj", "{B4012B68-C043-3655-E7EA-3951C0297691}"
 EndProject
@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application"
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "IoTMoniteriing.Ui", "IoTMonitering.Ui\IoTMoniteriing.Ui.esproj", "{C3D11888-3E09-DF72-7601-44CEB7746A0A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoTMonitering.Domain", "IoTMonitering.Domain\IoTMonitering.Domain.csproj", "{12B39AA1-E50A-177D-8D6D-D7DF97C1C713}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{C3D11888-3E09-DF72-7601-44CEB7746A0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C3D11888-3E09-DF72-7601-44CEB7746A0A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C3D11888-3E09-DF72-7601-44CEB7746A0A}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{12B39AA1-E50A-177D-8D6D-D7DF97C1C713}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12B39AA1-E50A-177D-8D6D-D7DF97C1C713}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12B39AA1-E50A-177D-8D6D-D7DF97C1C713}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12B39AA1-E50A-177D-8D6D-D7DF97C1C713}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -55,6 +61,7 @@ Global
 		{C127D7B5-AA9A-460C-B1D5-D6030CECC3AE} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{A46FEB50-30FE-4BDB-B583-715DECA08B7B} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{C3D11888-3E09-DF72-7601-44CEB7746A0A} = {85F3C03A-59A5-4CBA-85AF-17EFCD42CFD5}
+		{12B39AA1-E50A-177D-8D6D-D7DF97C1C713} = {C127D7B5-AA9A-460C-B1D5-D6030CECC3AE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8B3090D0-CC42-482F-829E-DEA0F97BD341}

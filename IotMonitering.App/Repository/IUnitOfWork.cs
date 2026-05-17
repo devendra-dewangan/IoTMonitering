@@ -1,4 +1,5 @@
-using IoTMonitoring.Models;
+
+using IoTMonitering.Domain.Entity;
 
 namespace IoTMonitoring.App.Repository
 {

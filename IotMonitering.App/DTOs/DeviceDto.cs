@@ -1,4 +1,6 @@
-﻿namespace IoTMonitoring.Models.DTOs
+﻿using IoTMonitering.Domain.Entity;
+
+namespace IoTMonitoring.DTOs
 {
         public class DeviceCreateDto
         {

@@ -1,6 +1,6 @@
+using IoTMonitering.Domain.Entity;
 using IoTMonitoring.App.Repository;
-using IoTMonitoring.Models;
-using IoTMonitoring.Models.DTOs;
+using IoTMonitoring.DTOs;
 namespace IoTMonitoring.App.Services
 {
     public class DeviceService(IUnitOfWork _unitOfWork) : IDeviceService

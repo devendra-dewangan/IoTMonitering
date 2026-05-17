@@ -1,8 +1,9 @@
-﻿namespace IoTMonitoring.Models.DTOs
+﻿namespace IoTMonitoring.DTOs
 {
-    public class UserRegisterDto
+    public class UserLoginDto
     {
         public string Username { get; set; } = "";
         public string Password { get; set; } = "";
     }
+
 }

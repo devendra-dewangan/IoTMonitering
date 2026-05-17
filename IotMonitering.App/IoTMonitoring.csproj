@@ -8,12 +8,9 @@
 
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
-    <PackageReference Include="Google.Protobuf" Version="3.32.1" />
+	  <PackageReference Include="Google.Protobuf" Version="3.34.1" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.71.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.72.0">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+    
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0">
@@ -24,8 +21,9 @@
     <PackageReference Include="Microsoft.Identity.Client" Version="4.84.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.0.0" />
   </ItemGroup>
-	<ItemGroup>
-		<Protobuf Include="Protos\telemetry.proto" GrpcServices="Server" />
-	</ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IoTMonitering.Domain\IoTMonitering.Domain.csproj" />
+  </ItemGroup>
 
 </Project>

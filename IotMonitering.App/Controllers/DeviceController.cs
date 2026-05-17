@@ -1,8 +1,6 @@
 ﻿using IoTMonitoring.App.Services;
-using IoTMonitoring.Models;
-using IoTMonitoring.Models.DTOs;
+using IoTMonitoring.DTOs;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace IoTMonitoring.Controllers
 {

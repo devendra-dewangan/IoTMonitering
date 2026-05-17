@@ -1,4 +1,5 @@
-﻿using IoTMonitoring.Data;
+﻿using IoTMonitering.Domain.Entity;
+using IoTMonitoring.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IoTMonitoring.Controllers
@@ -18,7 +19,7 @@ namespace IoTMonitoring.Controllers
         public async Task<IActionResult> AddUser()
         {
             string id = Guid.NewGuid().ToString();
-            var newUser = new Models.User()
+            var newUser = new User()
             {
                 UserID = id
             };

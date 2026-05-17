@@ -1,6 +1,6 @@
 ﻿syntax = "proto3";
 
-option csharp_namespace = "IoTMonitoring.Grpc";
+option csharp_namespace = "IoTMonitering.Domain.Protos";
 
 service TelemetryService {
   // Server streaming (client sends telemetry continuously)

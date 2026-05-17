@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace IoTMonitoring.Models
+namespace IoTMonitering.Domain.Entity
 {
     public class User
     {

@@ -1,4 +1,4 @@
-﻿namespace IoTMonitoring.Models
+﻿namespace IoTMonitering.Domain.Entity
 {
     public enum DeviceType
     {

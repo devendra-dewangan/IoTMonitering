@@ -1,5 +1,5 @@
-using IoTMonitoring.Models;
-using IoTMonitoring.Models.DTOs;
+using IoTMonitering.Domain.Entity;
+using IoTMonitoring.DTOs;
 
 namespace IoTMonitoring.App.Services
 {

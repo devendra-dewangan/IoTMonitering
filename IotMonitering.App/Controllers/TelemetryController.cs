@@ -1,8 +1,7 @@
-﻿using System.Security.Claims;
+﻿using IoTMonitering.Domain.Entity;
 using IoTMonitoring.Data;
+using IoTMonitoring.DTOs;
 using IoTMonitoring.Hubs;
-using IoTMonitoring.Models;
-using IoTMonitoring.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;

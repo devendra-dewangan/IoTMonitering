@@ -1,5 +1,5 @@
+using IoTMonitering.Domain.Entity;
 using IoTMonitoring.Data;
-using IoTMonitoring.Models;
 
 namespace IoTMonitoring.App.Repository
 {
