@@ -1,37 +1,37 @@
 ﻿using DeviceMock.Models;
 using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.Logging;
 
 
 namespace DeviceMock.Clients
 {
-    internal class TelemtryHubClient : TelemetryClient
+    internal class TelemtryHubClient : IClient
     {
-        private readonly HubConnection hubConnection;
-        public TelemtryHubClient()
+        private readonly HubConnection _hubConnection;
+        private readonly ILogger _logger;
+
+        public TelemtryHubClient(HubConnection hubConnection, ILogger<TelemtryHubClient> logger)
         {
-            hubConnection =new HubConnectionBuilder()
-                .WithUrl("endpoint")
-                .WithAutomaticReconnect()
-                .Build();
-            hubConnection.StartAsync().RunSynchronously();
-            Console.WriteLine("[SignalR] Connected");
+            _hubConnection = hubConnection;
+            _logger = logger;
+            _logger.LogInformation("[SignalR] Connected");
         }
 
-        public override bool IsDeviceRegistered(string deviceId)
+        public bool IsDeviceRegistered(string deviceId)
         {
             return false;
         }
 
-        public override async Task SendTelemetryAsync(Telemetry data)
+        public async Task SendTelemetryAsync(Telemetry data)
         {
             try
             {
-                await hubConnection.InvokeAsync("SendTelemetry", data);
-                Console.WriteLine($"[SignalR] {data.DeviceId} → Sent");
+                await _hubConnection.InvokeAsync("SendTelemetry", data);
+                _logger.LogInformation($"[SignalR] {data.DeviceId} → Sent");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[SignalR ERROR] {ex.Message}");
+                _logger.LogError(ex, $"[SignalR ERROR] {ex.Message}");
             }
         }
     }

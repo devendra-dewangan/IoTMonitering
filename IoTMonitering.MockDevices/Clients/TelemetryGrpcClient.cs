@@ -1,24 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DeviceMock.Models;
+﻿using DeviceMock.Models;
 
 namespace DeviceMock.Clients
 {
-    internal class TelemetryGrpcClient : TelemetryClient
+    internal class TelemetryGrpcClient : IClient
     {
         public TelemetryGrpcClient()
         {
         }
 
-        public override bool IsDeviceRegistered(string deviceId)
+        public bool IsDeviceRegistered(string deviceId)
         {
             throw new NotImplementedException();
         }
 
-        public override Task SendTelemetryAsync(Telemetry telemetry)
+        public Task SendTelemetryAsync(Telemetry telemetry)
         {
             throw new NotImplementedException();
         }

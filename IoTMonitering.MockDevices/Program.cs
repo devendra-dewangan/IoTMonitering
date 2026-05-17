@@ -1,5 +1,6 @@
 ﻿using DeviceMock.Clients;
 using DeviceMock.HostedServices;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
@@ -15,20 +16,38 @@ builder.Services.Configure<ServerInfo>(
 
 builder.Services.AddHostedService<DeviceWoker>();
 
-builder.Services.AddHttpClient<TelemetryRestClient>((provider,client) =>
-{
-    var serverInfo = provider
-        .GetRequiredService<IOptions<ServerInfo>>()
-        .Value;
-    client.BaseAddress = new Uri(serverInfo.ServerUri);
-});
+builder.Services.AddHttpClient<TelemetryRestClient>(
+    (provider,client) =>
+    {
+        var serverInfo = provider
+            .GetRequiredService<IOptions<ServerInfo>>()
+            .Value;
+        client.BaseAddress = new Uri(serverInfo.ServerUri);
+    });
 builder.Services.AddKeyedScoped<IClient, TelemetryRestClient>(
     ProtocolType.Rest
     ,(provider,_) => provider.GetRequiredService<TelemetryRestClient>());
-    
+
+builder.Services.AddSingleton(provider =>
+{
+    var otions = provider.GetRequiredService<IOptions<ServerInfo>>().Value;
+    return new HubConnectionBuilder()
+        .WithUrl(otions.ServerUri)
+        .Build();
+});
+builder.Services.AddKeyedScoped<IClient, TelemtryHubClient>(ProtocolType.Hub);
+
+builder.Services.AddKeyedScoped<IClient, TelemetryTcpClient>(ProtocolType.Tcp);
+builder.Services.AddKeyedScoped<IClient, TelemetryUdpClient>(ProtocolType.Udp);
+builder.Services.AddKeyedScoped<IClient, TelemetryWebsocketClient>(ProtocolType.WebSocket);
+
+//builder.Services.AddGrpcClient<TelemetryGrpcClient>((provider,client) =>
+//{
+//    var serverInfo = provider.GetRequiredService<IOptions<ServerInfo>>().Value;
+//    client.Address = new Uri(serverInfo.ServerUri);
+//});
+//builder.Services.AddKeyedScoped<IClient, TelemetryGrpcClient>(ProtocolType.Grpc
+//    , (sp, _) => sp.GetRequiredService<TelemetryGrpcClient>());
 
 var app = builder.Build();
 app.Run();
-
-
-

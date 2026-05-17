@@ -10,7 +10,7 @@ namespace DeviceMock.HostedServices;
 
 public class DeviceWoker : BackgroundService
 {
-    private readonly DeviceInfo _options;
+    private readonly DeviceInfo _deviceInfo;
     private readonly ILogger<DeviceWoker> _logger;
     private readonly IServiceProvider _serviceProvider;
 
@@ -18,7 +18,7 @@ public class DeviceWoker : BackgroundService
                         , IOptions<DeviceInfo> options
                         ,ILogger<DeviceWoker> logger)
     {
-        _options = options.Value;
+        _deviceInfo = options.Value;
         _serviceProvider = services;
         _logger = logger;
     }
@@ -26,7 +26,7 @@ public class DeviceWoker : BackgroundService
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _logger.LogInformation("Device worker started.");
-        var client = _serviceProvider.GetRequiredKeyedService<IClient>(_options.ProtocolType);
+        var client = _serviceProvider.GetRequiredKeyedService<IClient>(_deviceInfo.ProtocolType);
 
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -41,7 +41,7 @@ public class DeviceWoker : BackgroundService
                     Humidity = new Random().Next(0, 100)
                 };
                 await client.SendTelemetryAsync(telemetry);
-                await Task.Delay(_options.DelayMs, stoppingToken);
+                await Task.Delay(_deviceInfo.DelayMs, stoppingToken);
             }
             catch (Exception ex)
             {

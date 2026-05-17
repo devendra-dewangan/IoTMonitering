@@ -2,39 +2,57 @@
 using System.Text;
 using System.Text.Json;
 using DeviceMock.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using MockDevices.Configurations;
 
 namespace DeviceMock.Clients
 {
-    internal class TelemetryTcpClient : TelemetryClient
+    internal class TelemetryTcpClient : IClient,IDisposable
     {
-        private readonly string _host;
-        private readonly int _port;
-        private readonly TcpClient _tcpClient = new TcpClient();
+        private readonly TcpClient _tcpClient;
+        private ILogger<TelemetryTcpClient> _logger;
+        private bool _disposed = false;
 
-        public TelemetryTcpClient()
+        public TelemetryTcpClient(ILogger<TelemetryTcpClient> logger,
+                                 IOptions<ServerInfo> serverInfo)
         {
+            _tcpClient = new TcpClient(
+                serverInfo.Value.ServerUri, serverInfo.Value.ServerPort);
+            _logger = logger;
+            _logger.LogInformation($"[TCP] Initialized for {serverInfo.Value.ServerUri}:{serverInfo.Value.ServerPort}");
         }
 
-        public override bool IsDeviceRegistered(string deviceId)
+        public void Dispose()
+        {
+            if (_disposed) return;
+
+            _tcpClient.Close();
+            _tcpClient.Dispose();
+            _disposed = true;
+        }
+
+        
+
+        public bool IsDeviceRegistered(string deviceId)
         {
             return false;
         }
 
-        public override async Task SendTelemetryAsync(Telemetry telemetry)
+        public async Task SendTelemetryAsync(Telemetry telemetry)
         {
             try
             {
-                await _tcpClient.ConnectAsync(_host,_port);
+                //await _tcpClient.ConnectAsync();
                 var json = JsonSerializer.Serialize(telemetry);
                 var bytes = Encoding.UTF8.GetBytes(json);
                 using var stream = _tcpClient.GetStream();
                 await stream.WriteAsync(bytes, 0, bytes.Length);
-                Console.WriteLine($"[TCP] {telemetry.DeviceId} → Sent");
+                _logger.LogInformation($"[TCP] {telemetry.DeviceId} → Sent");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[TCP ERROR] {ex.Message}");
+                _logger.LogError($"[TCP ERROR] {ex.Message}");
             }
 
         }

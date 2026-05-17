@@ -2,29 +2,36 @@
 using System.Text;
 using System.Text.Json;
 using DeviceMock.Models;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using MockDevices.Configurations;
 
 namespace DeviceMock.Clients
 {
-    internal class TelemetryWebsocketClient : TelemetryClient
+    internal class TelemetryWebsocketClient : IClient
     {
-        private readonly ClientWebSocket clientWebSocket = new ClientWebSocket();
-        public TelemetryWebsocketClient()
+        private readonly ClientWebSocket _clientWebSocket;
+        private readonly ILogger _logger;
+
+        public TelemetryWebsocketClient(ILogger<TelemetryWebsocketClient> logger,IOptions<ServerInfo> serverInfo)
         {
-            clientWebSocket.ConnectAsync(new Uri("endpoint"), CancellationToken.None).RunSynchronously();
-            Console.WriteLine("[WebSocket] Connected");
+            _logger = logger;
+            _clientWebSocket = new ClientWebSocket();
+            _clientWebSocket.ConnectAsync(new Uri(serverInfo.Value.ServerUri), CancellationToken.None).RunSynchronously();
+            _logger.LogInformation("[WebSocket] Connected");
         }
 
-        public override bool IsDeviceRegistered(string deviceId)
+        public bool IsDeviceRegistered(string deviceId)
         {
             return false;
         }
 
-        public override async Task SendTelemetryAsync(Telemetry data)
+        public async Task SendTelemetryAsync(Telemetry data)
         {
             var json = JsonSerializer.Serialize(data);
             var bytes = Encoding.UTF8.GetBytes(json);
-            await clientWebSocket.SendAsync(bytes, WebSocketMessageType.Text, true, CancellationToken.None);
-            Console.WriteLine($"[WebSocket] {data.DeviceId} → Sent");
+            await _clientWebSocket.SendAsync(bytes, WebSocketMessageType.Text, true, CancellationToken.None);
+            _logger.LogInformation($"[WebSocket] {data.DeviceId} → Sent");
         }
     }
 }
