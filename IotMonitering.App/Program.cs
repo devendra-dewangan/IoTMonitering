@@ -2,6 +2,8 @@ using IoTMonitoring.App.Repository;
 using IoTMonitoring.Data;
 using IoTMonitoring.Grpc;
 using IoTMonitoring.Hubs;
+using IoTMonitoring.TCP;
+using IoTMonitoring.UDP;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,6 +34,8 @@ builder.Services.AddControllers();
 builder.Services.AddSignalR();
 builder.Services.AddGrpc();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHostedService<TcpServerService>();
+builder.Services.AddHostedService<UpdServerService>();
 
 var app = builder.Build();
 

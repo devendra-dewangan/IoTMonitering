@@ -8,10 +8,11 @@ using MockDevices.Configurations;
 
 namespace DeviceMock.Clients
 {
-    internal class TelemetryTcpClient : IClient,IDisposable
+    internal class TelemetryTcpClient : IClient, IDisposable
     {
         private readonly TcpClient _tcpClient;
-        private ILogger<TelemetryTcpClient> _logger;
+        private readonly ILogger<TelemetryTcpClient> _logger;
+        private readonly NetworkStream _stream;
         private bool _disposed = false;
 
         public TelemetryTcpClient(ILogger<TelemetryTcpClient> logger,
@@ -20,6 +21,7 @@ namespace DeviceMock.Clients
             _tcpClient = new TcpClient(
                 serverInfo.Value.ServerUri, serverInfo.Value.ServerPort);
             _logger = logger;
+            _stream = _tcpClient.GetStream();
             _logger.LogInformation($"[TCP] Initialized for {serverInfo.Value.ServerUri}:{serverInfo.Value.ServerPort}");
         }
 
@@ -27,12 +29,12 @@ namespace DeviceMock.Clients
         {
             if (_disposed) return;
 
+            _stream.Close();
+            _stream.Dispose();
             _tcpClient.Close();
             _tcpClient.Dispose();
             _disposed = true;
         }
-
-        
 
         public bool IsDeviceRegistered(string deviceId)
         {
@@ -43,11 +45,9 @@ namespace DeviceMock.Clients
         {
             try
             {
-                //await _tcpClient.ConnectAsync();
                 var json = JsonSerializer.Serialize(telemetry);
                 var bytes = Encoding.UTF8.GetBytes(json);
-                using var stream = _tcpClient.GetStream();
-                await stream.WriteAsync(bytes, 0, bytes.Length);
+                await _stream.WriteAsync(bytes, 0, bytes.Length);
                 _logger.LogInformation($"[TCP] {telemetry.DeviceId} → Sent");
             }
             catch (Exception ex)
@@ -56,5 +56,6 @@ namespace DeviceMock.Clients
             }
 
         }
+
     }
 }
