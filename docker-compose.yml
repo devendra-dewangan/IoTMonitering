@@ -14,8 +14,8 @@ services:
       - "5000:5000"
       - "5001:5001"
       - "5002:5002"
-      - "6000:6000"
-      - "6001:6001"
+      - "6000:6000/tcp"
+      - "6001:6001/udp"
 
     environment:
       ASPNETCORE_ENVIRONMENT: Development

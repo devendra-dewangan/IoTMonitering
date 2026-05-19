@@ -7,7 +7,7 @@
 
     public class HubConfig : ServerConfig
     {
-        public string Route { get; set; } = "/Hub";
+        public string Route { get; set; } = "Hub";
     }
     public class ServerConfiguration
     {

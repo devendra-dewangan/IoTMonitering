@@ -19,17 +19,17 @@ builder.Services.Configure<ServerConfiguration>(builder.Configuration.GetSection
 var config = builder.Configuration.GetSection(nameof(ServerConfiguration)).Get<ServerConfiguration>()!;
 builder.WebHost.ConfigureKestrel((sp,options) =>
 {
-    options.ListenLocalhost(config.RestApi.Port, o =>
+    options.ListenAnyIP(config.RestApi.Port, o =>
     {
         o.Protocols = HttpProtocols.Http1;
     });
 
-    options.ListenLocalhost(config.SignalR.Port, o =>
+    options.ListenAnyIP(config.SignalR.Port, o =>
     {
         o.Protocols = HttpProtocols.Http1;
     });
 
-    options.ListenLocalhost(config.Grpc.Port, o =>
+    options.ListenAnyIP(config.Grpc.Port, o =>
     {
         o.Protocols = HttpProtocols.Http2;
     });
