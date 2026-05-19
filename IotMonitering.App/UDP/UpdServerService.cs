@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using IoTMonitoring.Config;
+using Microsoft.Extensions.Options;
 using System.Net.Sockets;
 using System.Text;
 
@@ -9,12 +10,12 @@ namespace IoTMonitoring.UDP
         private readonly ILogger<UpdServerService> _logger;
         private readonly UdpClient _udpServer;
 
-        public UpdServerService(ILogger<UpdServerService> logger)
+        public UpdServerService(ILogger<UpdServerService> logger, IOptions<ServerConfiguration> options)
         {
             _logger = logger;
-            _udpServer = new UdpClient(6000);
+            _udpServer = new UdpClient(options.Value.Udp.Port);
             _logger.LogInformation(
-            "UDP Server Started On Port 6000");
+            "UDP Server Started On Port {endpoint}", options.Value.Udp.Port);
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)

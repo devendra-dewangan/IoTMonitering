@@ -1,4 +1,5 @@
 using IoTMonitoring.App.Repository;
+using IoTMonitoring.Config;
 using IoTMonitoring.Data;
 using IoTMonitoring.Grpc;
 using IoTMonitoring.Hubs;
@@ -9,22 +10,30 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.ConfigureKestrel(options =>
+
+
+builder.Services.AddOpenApi();
+builder.Services.AddSwaggerGen();
+builder.Services.Configure<ServerConfiguration>(builder.Configuration.GetSection(nameof(ServerConfiguration)));
+
+var config = builder.Configuration.GetSection(nameof(ServerConfiguration)).Get<ServerConfiguration>()!;
+builder.WebHost.ConfigureKestrel((sp,options) =>
 {
-    options.ListenLocalhost(5050, o =>
+    options.ListenLocalhost(config.RestApi.Port, o =>
     {
         o.Protocols = HttpProtocols.Http1;
     });
 
-    // gRPC
-    options.ListenLocalhost(7218, o =>
+    options.ListenLocalhost(config.SignalR.Port, o =>
+    {
+        o.Protocols = HttpProtocols.Http1;
+    });
+
+    options.ListenLocalhost(config.Grpc.Port, o =>
     {
         o.Protocols = HttpProtocols.Http2;
     });
 });
-
-builder.Services.AddOpenApi();
-builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -49,6 +58,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.MapControllers();
-app.MapHub<TelemetryHub>("/hubs");
+app.MapHub<TelemetryHub>(config.SignalR.Route);
 app.MapGrpcService<TelemetryGrpcService>();
 app.Run();

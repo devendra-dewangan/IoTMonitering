@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using IoTMonitoring.Config;
+using Microsoft.Extensions.Options;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
@@ -9,18 +11,17 @@ public class TcpServerService : BackgroundService, IDisposable
     private readonly ILogger<TcpServerService> _logger;
     private readonly TcpListener _TcpListner;
 
-    public TcpServerService(ILogger<TcpServerService> logger)
+    public TcpServerService(ILogger<TcpServerService> logger, IOptions<ServerConfiguration> options)
     {
         _logger = logger;
-        _TcpListner = new TcpListener(IPAddress.Any, 5000);
-
+        _TcpListner = new TcpListener(IPAddress.Any, options.Value.Tcp.Port);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _TcpListner.Start();
         _logger.LogInformation(
-            "TCP Server Started On Port 5000");
+            "TCP Server Started On {endpoint}", _TcpListner.LocalEndpoint);
         while (!stoppingToken.IsCancellationRequested)
         {
 
