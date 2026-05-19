@@ -1,0 +1,31 @@
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+
+WORKDIR /src
+
+#copy csproj and restore as distinct layers
+COPY ["IoTMonitering.Domain/IoTMonitering.Domain.csproj", "IoTMonitering.Domain/"]
+COPY ["IotMonitering.App/IoTMonitoring.App.csproj", "IotMonitering.App/"]
+RUN dotnet restore "IotMonitering.App/IoTMonitoring.App.csproj"
+
+COPY . ./
+
+WORKDIR "/src/IotMonitering.App"
+
+RUN ls -la
+
+#publish
+RUN dotnet publish -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 
+
+WORKDIR /app
+
+COPY --from=build /app/publish .
+
+EXPOSE 5000
+EXPOSE 5001
+EXPOSE 5002
+EXPOSE 6000
+EXPOSE 6001
+
+ENTRYPOINT ["dotnet", "IoTMonitoring.App.dll"]

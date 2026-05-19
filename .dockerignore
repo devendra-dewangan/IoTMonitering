@@ -1,0 +1,42 @@
+# Build folders
+bin/
+obj/
+
+# Visual Studio
+.vs/
+.vscode/
+
+# Git
+.git/
+.gitignore
+
+# Rider
+.idea/
+
+# Docker
+docker-compose*
+Dockerfile*
+
+# User files
+*.user
+*.suo
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test results
+TestResults/
+
+# Node modules (if frontend exists)
+node_modules/
+
+# Coverage
+coverage/
+
+# Publish output
+publish/
+out/

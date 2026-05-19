@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.6.11806.211 stable
+VisualStudioVersion = 18.6.11806.211
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoTMonitoring", "IotMonitering.App\IoTMonitoring.csproj", "{B4012B68-C043-3655-E7EA-3951C0297691}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoTMonitoring.App", "IotMonitering.App\IoTMonitoring.App.csproj", "{B4012B68-C043-3655-E7EA-3951C0297691}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Beckend", "Beckend", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
