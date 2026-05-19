@@ -3,49 +3,42 @@ using System;
 using IoTMonitoring.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace IoTMonitoring.Migrations
+namespace IoTMonitoring.App.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContectModelSnapshot : ModelSnapshot
+    partial class AppDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.9")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.8");
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("IoTMonitoring.Models.Device", b =>
+            modelBuilder.Entity("IoTMonitering.Domain.Entity.Device", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("DeviceKey")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Type")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -54,25 +47,23 @@ namespace IoTMonitoring.Migrations
                     b.ToTable("Devices");
                 });
 
-            modelBuilder.Entity("IoTMonitoring.Models.Telemetry", b =>
+            modelBuilder.Entity("IoTMonitering.Domain.Entity.Telemetry", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("DeviceId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<double>("Humidity")
-                        .HasColumnType("float");
+                        .HasColumnType("REAL");
 
                     b.Property<double>("Temperature")
-                        .HasColumnType("float");
+                        .HasColumnType("REAL");
 
                     b.Property<DateTime>("Timestamp")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -81,26 +72,24 @@ namespace IoTMonitoring.Migrations
                     b.ToTable("Telemetries");
                 });
 
-            modelBuilder.Entity("IoTMonitoring.Models.User", b =>
+            modelBuilder.Entity("IoTMonitering.Domain.Entity.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("UserID")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("IoTMonitoring.Models.Device", b =>
+            modelBuilder.Entity("IoTMonitering.Domain.Entity.Device", b =>
                 {
-                    b.HasOne("IoTMonitoring.Models.User", "User")
+                    b.HasOne("IoTMonitering.Domain.Entity.User", "User")
                         .WithMany("Devices")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -109,9 +98,9 @@ namespace IoTMonitoring.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("IoTMonitoring.Models.Telemetry", b =>
+            modelBuilder.Entity("IoTMonitering.Domain.Entity.Telemetry", b =>
                 {
-                    b.HasOne("IoTMonitoring.Models.Device", "Device")
+                    b.HasOne("IoTMonitering.Domain.Entity.Device", "Device")
                         .WithMany()
                         .HasForeignKey("DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -120,7 +109,7 @@ namespace IoTMonitoring.Migrations
                     b.Navigation("Device");
                 });
 
-            modelBuilder.Entity("IoTMonitoring.Models.User", b =>
+            modelBuilder.Entity("IoTMonitering.Domain.Entity.User", b =>
                 {
                     b.Navigation("Devices");
                 });

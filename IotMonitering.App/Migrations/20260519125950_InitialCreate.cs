@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace IoTMonitoring.Migrations
+namespace IoTMonitoring.App.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -15,11 +15,9 @@ namespace IoTMonitoring.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Role = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserID = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -30,13 +28,13 @@ namespace IoTMonitoring.Migrations
                 name: "Devices",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DeviceKey = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DeviceType = table.Column<int>(type: "int", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    DeviceKey = table.Column<string>(type: "TEXT", nullable: false),
+                    Type = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -50,21 +48,21 @@ namespace IoTMonitoring.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Telemetrys",
+                name: "Telemetries",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    DeviceId = table.Column<int>(type: "int", nullable: false),
-                    Tempreture = table.Column<double>(type: "float", nullable: false),
-                    Humidity = table.Column<double>(type: "float", nullable: false),
-                    Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    DeviceId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Temperature = table.Column<double>(type: "REAL", nullable: false),
+                    Humidity = table.Column<double>(type: "REAL", nullable: false),
+                    Timestamp = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Telemetrys", x => x.Id);
+                    table.PrimaryKey("PK_Telemetries", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Telemetrys_Devices_DeviceId",
+                        name: "FK_Telemetries_Devices_DeviceId",
                         column: x => x.DeviceId,
                         principalTable: "Devices",
                         principalColumn: "Id",
@@ -77,8 +75,8 @@ namespace IoTMonitoring.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Telemetrys_DeviceId",
-                table: "Telemetrys",
+                name: "IX_Telemetries_DeviceId",
+                table: "Telemetries",
                 column: "DeviceId");
         }
 
@@ -86,7 +84,7 @@ namespace IoTMonitoring.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Telemetrys");
+                name: "Telemetries");
 
             migrationBuilder.DropTable(
                 name: "Devices");
