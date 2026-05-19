@@ -5,8 +5,11 @@ using IoTMonitoring.Grpc;
 using IoTMonitoring.Hubs;
 using IoTMonitoring.TCP;
 using IoTMonitoring.UDP;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
@@ -43,6 +46,32 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHostedService<TcpServerService>();
 builder.Services.AddHostedService<UdpServerService>();
 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(option =>
+{
+    option.TokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidateIssuer = true,
+
+        ValidateAudience = true,
+
+        ValidateLifetime = true,
+
+        ValidateIssuerSigningKey = true,
+
+        ValidIssuer =
+                    builder.Configuration["Jwt:Issuer"],
+
+        ValidAudience =
+                    builder.Configuration["Jwt:Audience"],
+
+        IssuerSigningKey =
+                    new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(
+                            builder.Configuration["Jwt:Key"]!))
+    };
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -54,6 +83,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 app.MapHub<TelemetryHub>(config.SignalR.Route);
 app.MapGrpcService<TelemetryGrpcService>();
