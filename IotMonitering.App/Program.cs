@@ -9,9 +9,6 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
-
-
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 builder.Services.Configure<ServerConfiguration>(builder.Configuration.GetSection(nameof(ServerConfiguration)));
@@ -44,7 +41,7 @@ builder.Services.AddSignalR();
 builder.Services.AddGrpc();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHostedService<TcpServerService>();
-builder.Services.AddHostedService<UpdServerService>();
+builder.Services.AddHostedService<UdpServerService>();
 
 var app = builder.Build();
 

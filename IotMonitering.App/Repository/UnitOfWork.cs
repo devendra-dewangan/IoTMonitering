@@ -1,15 +1,16 @@
 using IoTMonitering.Domain.Entity;
 using IoTMonitoring.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace IoTMonitoring.App.Repository
 {
     public class UnitOfWork(AppDbContext _context) : IUnitOfWork
     {
-        private IRepository<User>? _userRepository;
-        private IDeviceRepository? _deviceRepository;
-        
-        public IRepository<User> Users => _userRepository ??= new UserRepository(_context);
-        public IDeviceRepository Devices => _deviceRepository ??= new DeviceRepository(_context);
+        private readonly Lazy<IRepository<User>> _userRepository = new(() => new UserRepository(_context));
+        private readonly Lazy<IDeviceRepository> _deviceRepository = new(() => new DeviceRepository(_context));
+
+        public IRepository<User> Users => _userRepository.Value;
+        public IDeviceRepository Devices => _deviceRepository.Value;
 
         public async Task<int> CommitAsync()
         {

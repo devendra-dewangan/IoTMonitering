@@ -5,12 +5,12 @@ using System.Text;
 
 namespace IoTMonitoring.UDP
 {
-    public class UpdServerService : BackgroundService, IDisposable
+    public class UdpServerService : BackgroundService, IDisposable
     {
-        private readonly ILogger<UpdServerService> _logger;
+        private readonly ILogger<UdpServerService> _logger;
         private readonly UdpClient _udpServer;
 
-        public UpdServerService(ILogger<UpdServerService> logger, IOptions<ServerConfiguration> options)
+        public UdpServerService(ILogger<UdpServerService> logger, IOptions<ServerConfiguration> options)
         {
             _logger = logger;
             _udpServer = new UdpClient(options.Value.Udp.Port);
