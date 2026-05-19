@@ -8,23 +8,57 @@ using MockDevices.Configurations;
 
 namespace DeviceMock.Clients
 {
-    internal class TelemetryUdpClient : IClient
+    public class TelemetryUdpClient : IClient, IDisposable
     {
         
-        private readonly UdpClient _udpClient = new UdpClient();
+        private readonly UdpClient _udpClient;
+        private readonly ServerInfo _serverInfo;
         private readonly ILogger _logger;
+        private bool _isDisposed = false;
 
         public TelemetryUdpClient(ILogger<TelemetryUdpClient> logger,
             IOptions<ServerInfo> serverInfo) 
         { 
             _logger = logger; 
-            _udpClient = new UdpClient(serverInfo.Value.ServerUri, serverInfo.Value.ServerPort);
+            _udpClient = new UdpClient();
+            _serverInfo = serverInfo.Value;
         }
-       
 
-        public bool IsDeviceRegistered(string deviceId)
+        public async Task<bool> ConnectAsync()
         {
+            try
+            {
+                _udpClient.Connect(_serverInfo.ServerUri, _serverInfo.ServerPort);
+                return true;
+               
+            }
+            catch (Exception ex)
+            {
+                CleanUp();
+                await Task.Delay(5000);
+                _logger.LogError($"Unable to connect {ex.Message}");
+            }
             return false;
+          
+        }
+
+        public void Dispose()
+        {
+            if (_isDisposed)
+                return;
+            CleanUp();
+            _isDisposed = true;
+        }
+
+        private void CleanUp()
+        {
+            _udpClient.Close();
+            _udpClient.Dispose();
+        }
+
+        public Task<bool> RegisterDeviceAsync()
+        {
+            return Task.FromResult(true);
         }
 
         public async Task SendTelemetryAsync(Telemetry data)
@@ -39,6 +73,7 @@ namespace DeviceMock.Clients
             catch (Exception ex)
             {
                 _logger.LogError($"[UDP ERROR] {ex.Message}");
+                throw;
             }
         }
     }

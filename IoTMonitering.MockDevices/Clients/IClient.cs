@@ -4,8 +4,8 @@ namespace DeviceMock.Clients
 {
     public interface IClient
     {
-        bool IsDeviceRegistered(string deviceId);
-
+        Task<bool> ConnectAsync();
+        Task<bool> RegisterDeviceAsync();
         Task SendTelemetryAsync(Telemetry telemetry);
     }
 
@@ -13,7 +13,6 @@ namespace DeviceMock.Clients
     {
         Rest,
         Hub,
-        WebSocket,
         Tcp,
         Udp,
         Grpc

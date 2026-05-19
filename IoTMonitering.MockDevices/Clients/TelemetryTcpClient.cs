@@ -10,35 +10,43 @@ namespace DeviceMock.Clients
 {
     internal class TelemetryTcpClient : IClient, IDisposable
     {
-        private readonly TcpClient _tcpClient;
+        private readonly ServerInfo _serverInfo;
         private readonly ILogger<TelemetryTcpClient> _logger;
-        private readonly NetworkStream _stream;
+        private NetworkStream? _stream;
+        private TcpClient? _tcpClient;
         private bool _disposed = false;
 
         public TelemetryTcpClient(ILogger<TelemetryTcpClient> logger,
                                  IOptions<ServerInfo> serverInfo)
         {
-            _tcpClient = new TcpClient(
-                serverInfo.Value.ServerUri, serverInfo.Value.ServerPort);
+
+            _serverInfo = serverInfo.Value;
             _logger = logger;
-            _stream = _tcpClient.GetStream();
-            _logger.LogInformation($"[TCP] Initialized for {serverInfo.Value.ServerUri}:{serverInfo.Value.ServerPort}");
         }
 
-        public void Dispose()
+        public async Task<bool> ConnectAsync()
         {
-            if (_disposed) return;
-
-            _stream.Close();
-            _stream.Dispose();
-            _tcpClient.Close();
-            _tcpClient.Dispose();
-            _disposed = true;
-        }
-
-        public bool IsDeviceRegistered(string deviceId)
-        {
+            try
+            {
+                _tcpClient = new TcpClient();
+                await _tcpClient.ConnectAsync(_serverInfo.ServerUri, _serverInfo.ServerPort);
+                _logger.LogInformation($"[TCP] Initialized for {_serverInfo.ServerUri}:{_serverInfo.ServerPort}");
+                _stream = _tcpClient.GetStream();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation($"Unable to connect {ex.Message}");
+                CleanUp();
+                _logger.LogInformation("Waiting 5s For TCP Client clean up");
+                await Task.Delay(5000);
+            }
             return false;
+        }
+
+        public Task<bool> RegisterDeviceAsync()
+        {
+            return Task.FromResult(true);
         }
 
         public async Task SendTelemetryAsync(Telemetry telemetry)
@@ -47,15 +55,30 @@ namespace DeviceMock.Clients
             {
                 var json = JsonSerializer.Serialize(telemetry);
                 var bytes = Encoding.UTF8.GetBytes(json);
-                await _stream.WriteAsync(bytes, 0, bytes.Length);
+                await _stream!.WriteAsync(bytes);
                 _logger.LogInformation($"[TCP] {telemetry.DeviceId} → Sent");
             }
             catch (Exception ex)
             {
                 _logger.LogError($"[TCP ERROR] {ex.Message}");
+                throw;
             }
 
         }
 
+        public void Dispose()
+        {
+            if (_disposed) return;
+            CleanUp();
+            _disposed = true;
+        }
+
+        private void CleanUp()
+        {
+            _stream?.Close();
+            _stream?.Dispose();
+            _tcpClient?.Close();
+            _tcpClient?.Dispose();
+        }
     }
 }

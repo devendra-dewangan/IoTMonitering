@@ -13,10 +13,11 @@ public class DeviceWoker : BackgroundService
     private readonly DeviceInfo _deviceInfo;
     private readonly ILogger<DeviceWoker> _logger;
     private readonly IServiceProvider _serviceProvider;
+    private int retryMax = 20;
 
     public DeviceWoker(IServiceProvider services
                         , IOptions<DeviceInfo> options
-                        ,ILogger<DeviceWoker> logger)
+                        , ILogger<DeviceWoker> logger)
     {
         _deviceInfo = options.Value;
         _serviceProvider = services;
@@ -27,6 +28,34 @@ public class DeviceWoker : BackgroundService
     {
         _logger.LogInformation("Device worker started.");
         var client = _serviceProvider.GetRequiredKeyedService<IClient>(_deviceInfo.ProtocolType);
+        for (int i = 0; i < retryMax && !stoppingToken.IsCancellationRequested; i++)
+        {
+            if(!await StartService(client, stoppingToken))
+            {
+                if (!stoppingToken.IsCancellationRequested)
+                {
+                    _logger.LogInformation($"Wainting 10s before retry");
+                    await Task.Delay(TimeSpan.FromSeconds(10));
+                }
+            }
+        } 
+        
+        _logger.LogInformation("Device worker stopped.");
+    }
+
+    private async Task<bool> StartService(IClient client, CancellationToken stoppingToken)
+    {
+        if (!await client.ConnectAsync())
+        {
+            _logger.LogError("Failed to connect to telemetry client.");
+            return false;
+        }
+
+        if (!await client.RegisterDeviceAsync())
+        {
+            _logger.LogError("Failed to register device.");
+            return false;
+        }
 
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -44,11 +73,12 @@ public class DeviceWoker : BackgroundService
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error sending telemetry data.");
-                throw;
+                _logger.LogError(ex.Message, "Error sending telemetry data.");
+                break;
             }
-            
+
         }
-        _logger.LogInformation("Device worker stopped.");
+
+        return true;
     }
 }

@@ -16,9 +16,14 @@ namespace DeviceMock.Clients
             _logger = logger;
         }
 
-        public bool IsDeviceRegistered(string deviceId)
+        public Task<bool> ConnectAsync()
         {
-            return false;
+            return Task.FromResult(true);
+        }
+
+        public Task<bool> RegisterDeviceAsync()
+        {
+            return Task.FromResult(false);
         }
 
         public async Task SendTelemetryAsync(Telemetry data)
@@ -33,6 +38,7 @@ namespace DeviceMock.Clients
             catch (Exception ex)
             {
                 _logger.LogError($"[REST ERROR] {ex.Message}");
+                throw;
             }
         }
     }

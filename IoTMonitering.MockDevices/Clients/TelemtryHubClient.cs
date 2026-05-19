@@ -15,18 +15,29 @@ namespace DeviceMock.Clients
         {
             _hubConnection = hubConnection;
             _logger = logger;;
-            _hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
-            {
-                _logger.LogInformation($"{user}: {message}");
-            });
-            _hubConnection.StartAsync().Wait();
-
-            _logger.LogInformation("Connected to SignalR Hub");
+            _hubConnection.On<string, string>("ReceiveMessage", (user, message) => _logger.LogInformation($"{user}: {message}"));
         }
 
-        public bool IsDeviceRegistered(string deviceId)
+        public async Task<bool> ConnectAsync()
         {
+            try
+            {
+                await _hubConnection.StartAsync();
+                _logger.LogInformation("SignalR Hub Connection Started");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to connect to SignalR Hub");
+            }
+
             return false;
+        }
+
+
+        public Task<bool> RegisterDeviceAsync()
+        {
+            return Task.FromResult(true);
         }
 
         public async Task SendTelemetryAsync(Telemetry data)
@@ -39,6 +50,7 @@ namespace DeviceMock.Clients
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"[SignalR ERROR] {ex.Message}");
+                throw;
             }
         }
     }

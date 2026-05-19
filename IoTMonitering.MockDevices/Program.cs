@@ -44,7 +44,6 @@ builder.Services.AddKeyedScoped<IClient, TelemtryHubClient>(ProtocolType.Hub);
 
 builder.Services.AddKeyedScoped<IClient, TelemetryTcpClient>(ProtocolType.Tcp);
 builder.Services.AddKeyedScoped<IClient, TelemetryUdpClient>(ProtocolType.Udp);
-builder.Services.AddKeyedScoped<IClient, TelemetryWebsocketClient>(ProtocolType.WebSocket);
 
 builder.Services.AddGrpcClient<TelemetryService.TelemetryServiceClient>((provider, client) =>
 {
