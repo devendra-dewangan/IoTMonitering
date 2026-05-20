@@ -1,3 +1,4 @@
 .vs/
 /test/
 localhost/
+/IotMonitering.App/IoTDevice.db
