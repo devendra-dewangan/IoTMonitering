@@ -8,27 +8,30 @@ namespace IoTMonitoring.App.Services
     {
         Task<IEnumerable<Device>> GetAllDevicesAsync(string userId);
         Task<Device?> GetDeviceByIdAsync(string id);
-        Task<Device?> AddDeviceAsync(DeviceCreateDto device);
+        Task<Device?> RegisterDevice(string key, string userId);
         Task<Device?> UpdateDeviceAsync(string id, DeviceUpdateDto dto);
         Task DeleteDeviceAsync(string id);
+        Task AddDeviceToTempList(DeviceCreateDto device);
     }
     public class DeviceService(IUnitOfWork _unitOfWork, UserManager<User> _userManager) : IDeviceService
     {
+        private static Dictionary<string, List<Device>> _tempDeivceList = new();
 
-        public async Task<Device?> AddDeviceAsync(DeviceCreateDto dto)
+        public async Task<Device?> RegisterDevice(string key, string userId)
         {
-            var user = await _userManager.FindByIdAsync(dto.userID);
-            var key = Guid.NewGuid().ToString();
-            var device = new Device
+            if (_tempDeivceList.TryGetValue(userId, out var devices))
             {
-                Name = dto.Name,
-                DeviceKey = key,
-                UserId = user.Id,
-                Type = dto.Type,
-            };
+                var device = devices.FirstOrDefault(d => d.DeviceKey == key);
 
-            await _unitOfWork.Devices.AddAsync(device);
-            return await _unitOfWork.CommitAsync() > 0 ? device : null;
+                if (device != null)
+                {
+                    devices.Remove(device);
+                    _tempDeivceList[userId] = devices;
+                    await _unitOfWork.Devices.AddAsync(device);
+                    return await _unitOfWork.CommitAsync() > 0 ? device : null;
+                }
+            }
+            return null;
         }
 
         public Task DeleteDeviceAsync(string id)
@@ -50,5 +53,22 @@ namespace IoTMonitoring.App.Services
         {
             throw new NotImplementedException();
         }
+
+        public Task AddDeviceToTempList(DeviceCreateDto device)
+        {
+            _tempDeivceList.TryGetValue(device.userID, out var devices);
+            devices ??= new List<Device>();
+            if (!devices.Exists(x => x.DeviceKey == device.deviceID))
+            {
+                devices.Add(new Device
+                {
+                    DeviceKey = device.deviceID,
+                    Type = device.Type,
+                });
+            }
+            _tempDeivceList[device.userID] = devices;
+            return Task.CompletedTask;
+        }
+
     }
 }

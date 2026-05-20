@@ -8,7 +8,6 @@ namespace IoTMonitoring.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options):base(options) { }
         public DbSet<Device> Devices { get; set; }
-        public DbSet<Telemetry> Telemetries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

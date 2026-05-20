@@ -1,4 +1,4 @@
-﻿namespace IoTMonitoring.Controllers
+﻿namespace IoTMonitoring.App.DTOs
 {
     public class RefreshRequestDto
     {

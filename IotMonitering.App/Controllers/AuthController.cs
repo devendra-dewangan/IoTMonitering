@@ -1,11 +1,9 @@
+using IoTMonitoring.App.DTOs;
 using IoTMonitoring.App.Services;
 using IoTMonitoring.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Identity.Client;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 
 namespace IoTMonitoring.Controllers
 {
@@ -54,7 +52,15 @@ namespace IoTMonitoring.Controllers
         {
             var user = await _userAuthService.GetToken(request.RefreshToken);
             return Ok(new UserLoginResponseDto { Token = user.Item1, RefreshToken = user.Item2 });
+        }
 
+        [HttpGet("{key}/token")]
+        [Authorize]
+        public async Task<IActionResult> GetDeviceToken(string key)
+        {
+            var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+            var device = await _userAuthService.GetDeviceToken(key, userId);
+            return Ok(device);
         }
     }
 }

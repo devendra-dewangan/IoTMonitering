@@ -1,4 +1,5 @@
-﻿using IoTMonitoring.DTOs;
+﻿using IoTMonitoring.App.Repository;
+using IoTMonitoring.DTOs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -75,17 +76,30 @@ namespace IoTMonitoring.App.Services
                     refreshToken);
         }
 
+
         public async Task<IoTMonitering.Domain.Entity.User?> RegisterUser(UserRegisterDto request)
         {
             var user = new IoTMonitering.Domain.Entity.User { UserName = request.Username };
             var result = await _userManager.CreateAsync(user, request.Password);
             return result.Succeeded ? user : null;
         }
+
+        public async Task<string?> GetDeviceToken(string key, string userId)
+        {
+            var user = await _userManager.Users.Include(x => x.Devices).FirstOrDefaultAsync(x => x.Id == userId);
+            var device = user?.Devices.FirstOrDefault(x => x.DeviceKey == key);
+            if (device == null)
+            {
+                return null;
+            }
+            return _tokenService.GenerateToken(device);
+        }
     }
 
     public interface IAuthService
     {
         Task<(string, string)> AuthenticateUser(UserLoginDto request);
+        Task<string?> GetDeviceToken(string key, string userId);
         Task<(string, string)> GetToken(string request);
         Task<IoTMonitering.Domain.Entity.User?> RegisterUser(UserRegisterDto request);
     }

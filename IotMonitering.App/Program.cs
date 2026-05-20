@@ -44,6 +44,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IDeviceService, DeviceService>();
+builder.Services.AddScoped<ITelemetryService, TelemetryService>();
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
 builder.Services.AddGrpc();

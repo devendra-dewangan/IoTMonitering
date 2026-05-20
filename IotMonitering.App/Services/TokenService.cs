@@ -18,19 +18,8 @@ namespace IoTMonitoring.App.Services
             _jwtConf = option.Value;
         }
 
-        public string GenerateToken(User user)
+        private string GenerateToken(IEnumerable<Claim> claims ,int ExpiryTime)
         {
-            var claims = new[]
-            {
-                new Claim(
-                    ClaimTypes.NameIdentifier,
-                    user.Id),
-
-                new Claim(
-                    ClaimTypes.Name,
-                    user.UserName)
-            };
-
             var key =
                 new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(_jwtConf.Key));
@@ -53,7 +42,7 @@ namespace IoTMonitoring.App.Services
 
                     expires:
                         DateTime.UtcNow
-                            .AddHours(1),
+                            .AddHours(ExpiryTime),
 
                     signingCredentials:
                         credentials);
@@ -61,6 +50,39 @@ namespace IoTMonitoring.App.Services
             return new
                 JwtSecurityTokenHandler()
                 .WriteToken(token);
+        }
+
+        public string GenerateToken(User user)
+        {
+            return GenerateToken(new[]
+            {
+                new Claim(
+                    ClaimTypes.NameIdentifier,
+                    user.Id),
+
+                new Claim(
+                    ClaimTypes.Name,
+                    user.UserName)
+
+            },
+            1);
+            
+        }
+
+        public string GenerateToken(Device device)
+        {
+            return GenerateToken(new[]
+            {
+                new Claim(
+                    ClaimTypes.NameIdentifier,
+                    device.Id.ToString()),
+
+                new Claim(
+                    ClaimTypes.Name,
+                    device.Name)
+
+            },
+            240);
         }
 
         public string GenerateRefreshToken()
@@ -83,6 +105,7 @@ namespace IoTMonitoring.App.Services
     public interface ITokenService
     {
         string GenerateToken(User user);
+        string GenerateToken(Device device);
         string GenerateRefreshToken();
     }
 }
