@@ -1,4 +1,6 @@
-﻿namespace IoTMonitering.Domain.Entity
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace IoTMonitering.Domain.Entity
 {
     public enum DeviceType
     {
@@ -13,7 +15,7 @@
         public string DeviceKey { get; set; } = string.Empty;
         public DeviceType Type { get; set; } = DeviceType.Unknown;
         public bool IsActive { get; set; } = true;
-        public int UserId { get; set; }
+        public string UserId { get; set; } = string.Empty;
         public User? User { get; set; }
     }
 }

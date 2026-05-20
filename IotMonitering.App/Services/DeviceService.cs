@@ -1,14 +1,23 @@
 using IoTMonitering.Domain.Entity;
 using IoTMonitoring.App.Repository;
 using IoTMonitoring.DTOs;
+using Microsoft.AspNetCore.Identity;
 namespace IoTMonitoring.App.Services
 {
-    public class DeviceService(IUnitOfWork _unitOfWork) : IDeviceService
+    public interface IDeviceService
+    {
+        Task<IEnumerable<Device>> GetAllDevicesAsync(string userId);
+        Task<Device?> GetDeviceByIdAsync(string id);
+        Task<Device?> AddDeviceAsync(DeviceCreateDto device);
+        Task<Device?> UpdateDeviceAsync(string id, DeviceUpdateDto dto);
+        Task DeleteDeviceAsync(string id);
+    }
+    public class DeviceService(IUnitOfWork _unitOfWork, UserManager<User> _userManager) : IDeviceService
     {
 
         public async Task<Device?> AddDeviceAsync(DeviceCreateDto dto)
         {
-            var user = _unitOfWork.Users.GetByIdAsync(dto.userID);
+            var user = await _userManager.FindByIdAsync(dto.userID);
             var key = Guid.NewGuid().ToString();
             var device = new Device
             {
@@ -29,8 +38,7 @@ namespace IoTMonitoring.App.Services
 
         public Task<IEnumerable<Device>> GetAllDevicesAsync(string userId)
         {
-            var user = _unitOfWork.Users.GetByIdAsync(userId);
-            return _unitOfWork.Devices.GetDevicesByUserIdAsync(user.Id);
+            return _unitOfWork.Devices.GetDevicesByUserIdAsync(userId);
         }
 
         public Task<Device?> GetDeviceByIdAsync(string id)

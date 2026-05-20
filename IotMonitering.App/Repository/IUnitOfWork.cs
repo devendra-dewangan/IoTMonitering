@@ -1,11 +1,11 @@
 
 using IoTMonitering.Domain.Entity;
+using Microsoft.AspNetCore.Identity;
 
 namespace IoTMonitoring.App.Repository
 {
     public interface IUnitOfWork
     {
-        IRepository<User> Users { get; }
         IDeviceRepository Devices { get; }
         Task<int> CommitAsync();
     }

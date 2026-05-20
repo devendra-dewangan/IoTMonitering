@@ -6,4 +6,9 @@
         public string Password { get; set; } = "";
     }
 
+    public class UserLoginResponseDto
+    {
+        public string Token { get; set; } = "";
+        public string RefreshToken { get; set; } = "";
+    }
 }

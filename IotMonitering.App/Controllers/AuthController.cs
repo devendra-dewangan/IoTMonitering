@@ -1,3 +1,5 @@
+using IoTMonitoring.App.Services;
+using IoTMonitoring.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
@@ -11,134 +13,48 @@ namespace IoTMonitoring.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        // In-memory session store
-        private static readonly Dictionary<string, LoginSession> Sessions = [];
+        private readonly IAuthService _userAuthService;
 
-        private readonly string clientId =
-            "";
-
-        private readonly string jwtKey =
-            "THIS_IS_MY_SUPER_SECRET_JWT_KEY_123456789";
-
-        [HttpPost("start")]
-        public IActionResult StartLogin()
+        public AuthController(IAuthService userAuthService)
         {
-            var sessionId = Guid.NewGuid().ToString();
-
-            var session = new LoginSession
-            {
-                SessionId = sessionId,
-                IsAuthenticated = false
-            };
-
-            Sessions[sessionId] = session;
-
-            _ = Task.Run(async () =>
-            {
-                try
-                {
-                    var app = PublicClientApplicationBuilder
-                        .Create(clientId)
-                        .WithAuthority(
-                            AzureCloudInstance.AzurePublic,
-                            "common")
-                        .Build();
-
-                    string[] scopes = { "User.Read" };
-
-                    var result = await app
-                        .AcquireTokenWithDeviceCode(
-                            scopes,
-                            deviceCodeResult =>
-                            {
-                                session.UserCode =
-                                    deviceCodeResult.UserCode;
-
-                                session.VerificationUrl =
-                                    deviceCodeResult.VerificationUrl;
-
-                                return Task.CompletedTask;
-                            })
-                        .ExecuteAsync();
-
-                    session.IsAuthenticated = true;
-
-                    session.Username =
-                        result.Account.Username;
-
-                    session.JwtToken =
-                        GenerateJwt(result.Account.Username);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-            });
-
-            return Ok(new
-            {
-                sessionId
-            });
+            _userAuthService = userAuthService;
         }
 
-        [HttpGet("status/{sessionId}")]
-        public IActionResult GetStatus(string sessionId)
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] UserLoginDto request)
         {
-            if (!Sessions.ContainsKey(sessionId))
+            var token = await _userAuthService.AuthenticateUser(request);
+
+            if (string.IsNullOrEmpty(token.Item1))
             {
-                return NotFound();
+                return Unauthorized(new { message = "Invalid username or password" });
             }
 
-            var session = Sessions[sessionId];
+            return Ok(new UserLoginResponseDto { Token = token.Item1, RefreshToken = token.Item2 });
+        }
 
-            return Ok(new
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] UserRegisterDto request)
+        {
+            var user = await _userAuthService.RegisterUser(request);
+
+            if (user == null)
             {
-                session.UserCode,
-                session.VerificationUrl,
-                session.IsAuthenticated,
-                session.Username,
-                session.JwtToken
+                return BadRequest(new { message = "Failed to register user" });
+            }
+
+            return Ok(new UserRegisterResponseDto()
+            {
+                Message = "User registered successfully"
             });
         }
 
-        private string GenerateJwt(string username)
+        [HttpPost("refresh")]
+        public async Task<IActionResult> RefreshToken(RefreshRequestDto request)
         {
-            var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(jwtKey));
+            var user = await _userAuthService.GetToken(request.RefreshToken);
+            return Ok(new UserLoginResponseDto { Token = user.Item1, RefreshToken = user.Item2 });
 
-            var creds = new SigningCredentials(
-                key,
-                SecurityAlgorithms.HmacSha256);
-
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.Name, username)
-            };
-
-            var token = new JwtSecurityToken(
-                issuer: "IoTMonitoring",
-                audience: "IoTMonitoringUsers",
-                claims: claims,
-                expires: DateTime.UtcNow.AddHours(1),
-                signingCredentials: creds);
-
-            return new JwtSecurityTokenHandler()
-                .WriteToken(token);
         }
-    }
-
-    public class LoginSession
-    {
-        public string SessionId { get; set; }
-
-        public string UserCode { get; set; }
-
-        public string VerificationUrl { get; set; }
-
-        public bool IsAuthenticated { get; set; }
-
-        public string Username { get; set; }
-
-        public string JwtToken { get; set; }
     }
 }

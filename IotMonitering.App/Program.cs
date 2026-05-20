@@ -1,4 +1,6 @@
+using IoTMonitoring.App.Config;
 using IoTMonitoring.App.Repository;
+using IoTMonitoring.App.Services;
 using IoTMonitoring.Config;
 using IoTMonitoring.Data;
 using IoTMonitoring.Grpc;
@@ -15,8 +17,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 builder.Services.Configure<ServerConfiguration>(builder.Configuration.GetSection(nameof(ServerConfiguration)));
+builder.Services.Configure<JwtConfiguration>(builder.Configuration.GetSection(nameof(JwtConfiguration)));
 
 var config = builder.Configuration.GetSection(nameof(ServerConfiguration)).Get<ServerConfiguration>()!;
+var jwtConfig = builder.Configuration.GetSection(nameof(JwtConfiguration)).Get<JwtConfiguration>()!;
 builder.WebHost.ConfigureKestrel((sp,options) =>
 {
     options.ListenAnyIP(config.RestApi.Port, o =>
@@ -39,35 +43,27 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
 builder.Services.AddGrpc();
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddHostedService<TcpServerService>();
 builder.Services.AddHostedService<UdpServerService>();
-
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(option =>
 {
     option.TokenValidationParameters = new TokenValidationParameters()
     {
         ValidateIssuer = true,
-
         ValidateAudience = true,
-
         ValidateLifetime = true,
-
         ValidateIssuerSigningKey = true,
-
-        ValidIssuer =
-                    builder.Configuration["Jwt:Issuer"],
-
-        ValidAudience =
-                    builder.Configuration["Jwt:Audience"],
-
-        IssuerSigningKey =
-                    new SymmetricSecurityKey(
+        ValidIssuer = jwtConfig.Issuer,
+        ValidAudience = jwtConfig.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(
                         Encoding.UTF8.GetBytes(
-                            builder.Configuration["Jwt:Key"]!))
+                            jwtConfig.Key))
     };
 });
 
