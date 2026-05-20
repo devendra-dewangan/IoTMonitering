@@ -22,12 +22,28 @@ public class TcpServerService : BackgroundService, IDisposable
         _TcpListner.Start();
         _logger.LogInformation(
             "TCP Server Started On {endpoint}", _TcpListner.LocalEndpoint);
-        while (!stoppingToken.IsCancellationRequested)
+
+        try
         {
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                var client =
+                    await _TcpListner.AcceptTcpClientAsync(stoppingToken);
 
-            var client = await _TcpListner.AcceptTcpClientAsync(stoppingToken);
-
-            _ = HandleClient(client, stoppingToken);
+                _ = HandleClient(client, stoppingToken);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation("TCP Server stopping...");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "TCP Server error");
+        }
+        finally
+        {
+            _TcpListner.Stop();
         }
     }
 

@@ -12,6 +12,7 @@ namespace IoTMonitoring.App.Services
         Task<Device?> UpdateDeviceAsync(string id, DeviceUpdateDto dto);
         Task DeleteDeviceAsync(string id);
         Task AddDeviceToTempList(DeviceCreateDto device);
+        IEnumerable<Device> GetRequestedDevices(string userId);
     }
     public class DeviceService(IUnitOfWork _unitOfWork, UserManager<User> _userManager) : IDeviceService
     {
@@ -68,6 +69,15 @@ namespace IoTMonitoring.App.Services
             }
             _tempDeivceList[device.userID] = devices;
             return Task.CompletedTask;
+        }
+
+        public IEnumerable<Device> GetRequestedDevices(string userId)
+        {
+            if (_tempDeivceList.TryGetValue(userId, out var devices))
+            {
+                return devices;
+            }
+            return [];
         }
 
     }

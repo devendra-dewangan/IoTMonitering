@@ -27,7 +27,7 @@ builder.Services.AddHttpClient<TelemetryRestClient>(
         var serverInfo = provider
             .GetRequiredService<IOptions<ServerInfo>>()
             .Value;
-        client.BaseAddress = new Uri(serverInfo.ServerUri);
+        client.BaseAddress = new Uri(serverInfo.ServerUri + ":" + serverInfo.ServerPort);
     });
 builder.Services.AddKeyedScoped<IClient, TelemetryRestClient>(
     ProtocolType.Rest

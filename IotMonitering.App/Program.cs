@@ -1,3 +1,4 @@
+using IoTMonitering.Domain.Entity;
 using IoTMonitoring.App.Config;
 using IoTMonitoring.App.Repository;
 using IoTMonitoring.App.Services;
@@ -8,6 +9,7 @@ using IoTMonitoring.Hubs;
 using IoTMonitoring.TCP;
 using IoTMonitoring.UDP;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -42,7 +44,12 @@ builder.WebHost.ConfigureKestrel((sp,options) =>
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddIdentity<User, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IDeviceService, DeviceService>();
 builder.Services.AddScoped<ITelemetryService, TelemetryService>();
@@ -79,8 +86,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
+Console.WriteLine(jwtConfig.Key);
+//app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

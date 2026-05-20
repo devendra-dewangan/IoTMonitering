@@ -13,7 +13,7 @@ namespace IoTMonitoring.Controllers
     {
         private IDeviceService _deviceService = service;
 
-        [HttpPost(Name = "SaveDevice")]
+        [HttpPost("SaveDevice")]
         public async Task<IActionResult> CreateDevice(string key)
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
@@ -32,11 +32,30 @@ namespace IoTMonitoring.Controllers
             });
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetDevices(string userID)
+        [HttpGet("DeviceList")]
+        public async Task<IActionResult> GetDevices()
         {
-            
-            var devices = await _deviceService.GetAllDevicesAsync(userID);
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            var devices = await _deviceService.GetAllDevicesAsync(userId);
+
+            if (!devices.Any())
+            {
+                return NoContent();
+            }
+
+            return Ok(devices.Select(d => new
+            {
+                Id = d.DeviceKey,
+                Name = d.Name,
+                Type = d.Type,
+            }));
+        }
+
+        [HttpGet(Name = "RequestedDevice")]
+        public async Task<IActionResult> GetReqDevices()
+        {
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            var devices = _deviceService.GetRequestedDevices(userId);
 
             if (!devices.Any())
             {
